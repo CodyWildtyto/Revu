@@ -1,5 +1,7 @@
-import Navigation from '../components/Navigation';
-import { CardLayout, PageLayout } from '../layout';
+import Page from '@/components/Page';
+import { Card } from '@/components/Card';
+import Nav from '@/components/Nav';
+import ReviewTable from './ReviewTable';
 
 const MOCKS = [
   {
@@ -52,40 +54,14 @@ const MOCKS = [
   },
 ];
 
-export default function Home() {
+export default function Review() {
   return (
-    <PageLayout className="">
-      <CardLayout className="grow">
-        <div className="overflow-y-scroll">
-          <table className="table-pin-rows table">
-            <thead>
-              <tr>
-                <th>Target</th>
-                <th>Writer</th>
-                <th>Excerpt</th>
-                <th>Assigner</th>
-                <th>Updated Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {MOCKS.map(
-                ({ article, assigner, datetime, writer, id, target }) => {
-                  return (
-                    <tr key={id}>
-                      <td>{target.name}</td>
-                      <td>{writer.name}</td>
-                      <td>{article.slice(0, 60)}</td>
-                      <td>{assigner.name}</td>
-                      <td>{new Date(datetime).toLocaleString()}</td>
-                    </tr>
-                  );
-                },
-              )}
-            </tbody>
-          </table>
-        </div>
-      </CardLayout>
-      <Navigation />
-    </PageLayout>
+    <Page>
+      <Card className="grow">
+        <h2>Review</h2>
+        <ReviewTable data={MOCKS} />
+      </Card>
+      <Nav />
+    </Page>
   );
 }
