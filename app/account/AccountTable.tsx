@@ -6,7 +6,7 @@ import { TAccount } from '@/types/account';
 export default function AccountTable({ data }: { data: TAccount[] }) {
   return (
     <div className="overflow-y-scroll">
-      <table className="table-pin-rows table">
+      <table className="table table-pin-rows">
         <thead>
           <tr>
             <th>Thumbnail</th>
@@ -19,17 +19,17 @@ export default function AccountTable({ data }: { data: TAccount[] }) {
           </tr>
         </thead>
         <tbody>
-          {data.map(({ datetime, id, name, role, thumbnail }: TAccount) => {
+          {data.map(({ updatedAt, id, name, role, thumbnailUrl }: TAccount) => {
             return (
               <tr className="hover" key={id}>
                 <td>
-                  <Thumbnail src={thumbnail} alt={name} />
+                  <Thumbnail src={thumbnailUrl} alt={name} />
                 </td>
                 <td>{name}</td>
                 <td>{role}</td>
                 <td>-</td>
                 <td>-</td>
-                <td>{new Date(datetime!).toLocaleString()}</td>
+                <td>{new Date(updatedAt!).toLocaleString()}</td>
                 <td>
                   <Link href={`/review/${id}`}>Reviews</Link>
                 </td>
