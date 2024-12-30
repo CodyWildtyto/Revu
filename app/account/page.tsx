@@ -5,9 +5,14 @@ import { Card } from '@/components/Card';
 import Page from '@/components/Page';
 import Nav from '@/components/Nav';
 import AccountTable from './AccountTable';
+import { AccountNewButton } from './AccountNewButton';
 
 export default function Account() {
-  const { data: list, isLoading } = useAccounts();
+  const { data: list, isLoading, refresh } = useAccounts();
+
+  const handleNewSuccess = () => {
+    refresh();
+  };
 
   return (
     <Page>
@@ -16,10 +21,11 @@ export default function Account() {
         {isLoading ? (
           <span className="loading loading-dots loading-sm" />
         ) : list.length ? (
-          <AccountTable data={list} />
+          <AccountTable data={list} onEditSuccess={handleNewSuccess} />
         ) : (
           '-'
         )}
+        <AccountNewButton onSuccess={handleNewSuccess} />
       </Card>
       <Nav />
     </Page>

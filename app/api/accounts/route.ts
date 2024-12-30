@@ -3,10 +3,12 @@ import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const { rows } =
-      await sql`SELECT id, name, role, thumbnail_url, updated_at FROM rv_account`;
+    const { rows } = await sql`
+        SELECT id, name, role, thumbnail_url, updated_at FROM rv_account
+        ORDER BY updated_at DESC
+      `;
 
-    return NextResponse.json(rows);
+    return NextResponse.json({ data: rows, length: rows.length, status: 200 });
   } catch (error) {
     console.log(error);
 

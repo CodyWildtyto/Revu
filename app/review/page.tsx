@@ -4,11 +4,19 @@ import { useReviews } from '@/app/hooks';
 import { Card } from '@/components/Card';
 import Page from '@/components/Page';
 import Nav from '@/components/Nav';
-import { ReviewNewModalButton } from './ReviewNewModalButton';
+import { ReviewNewButton } from './ReviewNewButton';
 import ReviewTable from './ReviewTable';
 
 export default function Review() {
-  const { data: list, isLoading } = useReviews();
+  const { data: list, isLoading, refresh } = useReviews();
+
+  const handleEditSuccess = () => {
+    refresh();
+  };
+
+  const handleNewSuccess = () => {
+    refresh();
+  };
 
   return (
     <Page>
@@ -17,11 +25,11 @@ export default function Review() {
         {isLoading ? (
           <span className="loading loading-dots loading-sm" />
         ) : list.length ? (
-          <ReviewTable data={list} />
+          <ReviewTable data={list} onEditSuccess={handleEditSuccess} />
         ) : (
           '-'
         )}
-        <ReviewNewModalButton />
+        <ReviewNewButton onSuccess={handleNewSuccess} />
       </Card>
       <Nav />
     </Page>

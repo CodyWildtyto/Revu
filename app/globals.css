@@ -8,13 +8,6 @@
   background-color: var(--background);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #dad2e9;
-    --foreground: #3d3d3d;
-  }
-}
-
 body {
   color: var(--foreground);
   background: var(--background);
@@ -33,6 +26,12 @@ h3 {
   @apply text-xl font-medium leading-relaxed tracking-tight;
 }
 
-.select:focus {
+.btn-primary {
+  color: #fff;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
   @apply outline-none;
 }

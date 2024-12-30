@@ -1,9 +1,21 @@
 import Link from 'next/link';
 
+import { InboxIcon } from '@/app/svgs';
 import Thumbnail from '@/components/Thumbnail';
 import { TAccount } from '@/types/account';
+import { AccountEditButton } from './AccountEditButton';
 
-export default function AccountTable({ data }: { data: TAccount[] }) {
+export default function AccountTable({
+  data,
+  onEditSuccess,
+}: {
+  data: TAccount[];
+  onEditSuccess: VoidFunction;
+}) {
+  const handleEditSuccess = () => {
+    onEditSuccess?.();
+  };
+
   return (
     <div className="overflow-y-scroll">
       <table className="table table-pin-rows">
@@ -31,7 +43,18 @@ export default function AccountTable({ data }: { data: TAccount[] }) {
                 <td>-</td>
                 <td>{new Date(updatedAt!).toLocaleString()}</td>
                 <td>
-                  <Link href={`/review/${id}`}>Reviews</Link>
+                  <AccountEditButton
+                    data={{ id, name, role }}
+                    onSuccess={handleEditSuccess}
+                  />
+                  <Link href={`/review/${id}`}>
+                    <button
+                      className="btn btn-square btn-ghost btn-sm"
+                      title="Inbox"
+                    >
+                      <InboxIcon />
+                    </button>
+                  </Link>
                 </td>
               </tr>
             );

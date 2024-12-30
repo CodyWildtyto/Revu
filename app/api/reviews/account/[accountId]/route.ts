@@ -10,8 +10,8 @@ export async function GET(
 ) {
   try {
     const { accountId } = await params;
-
-    const { rows } = await sql<TReviewDBRow>`SELECT 
+    const { rows } = await sql<TReviewDBRow>`
+      SELECT 
         rv_review.*,
         rv_account_target.name AS target_name, 
         rv_account_target.thumbnail_url AS target_thumbnail_url, 
@@ -22,12 +22,16 @@ export async function GET(
       ON rv_review.target_id = rv_account_target.id::text
       JOIN rv_account AS rv_account_writer 
       ON rv_review.writer_id = rv_account_writer.id::text
-      WHERE rv_review.target_id = ${accountId} OR  rv_review.writer_id = ${accountId};
+      WHERE rv_review.target_id = ${accountId} OR rv_review.writer_id = ${accountId}
+      ORDER BY rv_review.updated_at DESC;
     `;
-
     const response = rows.map(parseReviewDBRow);
 
-    return NextResponse.json(response);
+    return NextResponse.json({
+      data: response,
+      length: response.length,
+      status: 200,
+    });
   } catch (error) {
     console.log(error);
 

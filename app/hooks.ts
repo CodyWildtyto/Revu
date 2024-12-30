@@ -1,65 +1,42 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import useSWR from 'swr';
 
+import { API_URL } from '@/app/constants';
+import { parseAccountApiRow, parseReviewApiRow } from '@/app/parsers';
 import { TAccount } from '@/types/account';
-import { API_URL } from './constants';
-import { parseAccountApiRow, parseReviewApiRow } from './parsers';
+
+const fetcher = (url: string) =>
+  fetch(url)
+    .then((response) => response.json())
+    .then(({ data }) => data);
 
 export function useAccounts() {
-  const loading = useRef(true);
-  const [list, setList] = useState<TAccount[]>([]);
+  const url = `${API_URL}/accounts`;
+  const { data: rows = [], isLoading, mutate } = useSWR(url, fetcher);
 
-  const fetchData = useCallback(async () => {
-    const response = await fetch(`${API_URL}/accounts`);
-    const data = (await response.json()).map(parseAccountApiRow);
+  return {
+    data: rows.map(parseAccountApiRow) as TAccount[],
+    isLoading,
+    refresh: mutate,
+  };
+}
 
-    loading.current = response.status !== 200;
+export function useAccount(id: string) {
+  const url = `${API_URL}/account/${id}`;
+  const { data: row = {}, isLoading } = useSWR(url, fetcher);
 
-    setList(data);
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data: list, isLoading: loading.current };
+  return { data: parseAccountApiRow(row), isLoading };
 }
 
 export function useReviews() {
-  const loading = useRef(true);
-  const [list, setList] = useState([]);
+  const url = `${API_URL}/reviews`;
+  const { data: rows = [], isLoading, mutate } = useSWR(url, fetcher);
 
-  const fetchData = useCallback(async () => {
-    const response = await fetch(`${API_URL}/reviews`);
-    const data = (await response.json()).map(parseReviewApiRow);
-
-    loading.current = response.status !== 200;
-
-    setList(data);
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data: list, isLoading: loading.current };
+  return { data: rows.map(parseReviewApiRow), isLoading, refresh: mutate };
 }
 
 export function useReviewsByAccount(id: string) {
-  const loading = useRef(true);
-  const [list, setList] = useState([]);
+  const url = `${API_URL}/reviews/account/${id}`;
+  const { data: rows = [], isLoading, mutate } = useSWR(url, fetcher);
 
-  const fetchData = useCallback(async () => {
-    const response = await fetch(`${API_URL}/reviewsByAccount/${id}`);
-    const data = (await response.json()).map(parseReviewApiRow);
-
-    loading.current = response.status !== 200;
-
-    setList(data);
-  }, [id]);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  return { data: list, isLoading: loading.current };
+  return { data: rows.map(parseReviewApiRow), isLoading, refresh: mutate };
 }

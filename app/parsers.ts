@@ -1,4 +1,4 @@
-import { TAccountRow } from '@/types/account';
+import { TAccount, TAccountRow } from '@/types/account';
 import { TReviewDBRow, TReviewRow } from '@/types/review';
 
 export const parseAccountApiRow = (row: TAccountRow) => ({
@@ -7,6 +7,11 @@ export const parseAccountApiRow = (row: TAccountRow) => ({
   role: row.role,
   thumbnailUrl: row.thumbnail_url,
   updatedAt: Number(row.updated_at),
+});
+
+export const parseAccountSelectOption = (row: TAccount) => ({
+  text: row.name,
+  value: row.id,
 });
 
 export const parseReviewApiRow = (row: TReviewRow) => ({
