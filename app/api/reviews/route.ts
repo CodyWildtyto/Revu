@@ -1,10 +1,17 @@
 import { sql } from '@vercel/postgres';
 import { NextResponse } from 'next/server';
+import { getServerSession, User } from 'next-auth';
 
 import { parseReviewDBRow } from '@/app/parsers';
 import { TReviewDBRow } from '@/types/review';
+import { TAccount } from '@/types/account';
+import authOptions from '../auth/[...nextauth]/authOptions';
 
 export async function GET() {
+  const session = await getServerSession(authOptions);
+  const user = session?.user as User & TAccount;
+  const userIdOrNull = user?.role !== 'admin' ? user?.id : null;
+
   try {
     const { rows } = await sql<TReviewDBRow>`
       SELECT 
@@ -18,6 +25,8 @@ export async function GET() {
       ON rv_review.target_id = rv_account_target.id::text
       JOIN rv_account AS rv_account_writer 
       ON rv_review.writer_id = rv_account_writer.id::text
+      WHERE rv_review.writer_id = COALESCE(${userIdOrNull}, rv_review.writer_id)
+        OR rv_review.target_id = COALESCE(${userIdOrNull}, rv_review.target_id) 
       ORDER BY rv_review.updated_at DESC;
     `;
     const response = rows.map(parseReviewDBRow);

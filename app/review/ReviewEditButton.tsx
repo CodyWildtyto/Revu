@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 import { API_URL } from '@/app/constants';
@@ -5,7 +6,6 @@ import { useAccounts } from '@/app/hooks';
 import { EditIcon } from '@/app/svgs';
 import LabelSelect from '@/components/LabelSelect';
 import { TReview } from '@/types/review';
-import clsx from 'clsx';
 import { parseAccountSelectOption } from '../parsers';
 
 export function ReviewEditButton({

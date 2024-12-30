@@ -19,7 +19,7 @@ export default function Account() {
       <Card className="grow">
         <h2>Account</h2>
         {isLoading ? (
-          <span className="loading loading-dots loading-sm" />
+          <span className="loading loading-dots" />
         ) : list.length ? (
           <AccountTable data={list} onEditSuccess={handleNewSuccess} />
         ) : (

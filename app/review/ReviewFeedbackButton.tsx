@@ -1,9 +1,12 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useSession } from 'next-auth/react';
+import { User } from 'next-auth';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { API_URL } from '@/app/constants';
 import { useAccounts } from '@/app/hooks';
 import { FeedbackIcon } from '@/app/svgs';
 import LabelSelect from '@/components/LabelSelect';
+import { TAccount } from '@/types/account';
 import { TReview } from '@/types/review';
 import { parseAccountSelectOption } from '../parsers';
 
@@ -16,8 +19,12 @@ export function ReviewFeedbackButton({
 }) {
   const modalRef = useRef<HTMLDialogElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const loading = useRef(false);
+  const [saveLoading, setSaveLoading] = useState(false);
   const { data: list } = useAccounts();
+  const { data: session } = useSession();
+
+  const user = session?.user as User & TAccount;
+  const isWriter = writer.id === user?.id;
 
   const optionList = list.map(parseAccountSelectOption);
 
@@ -26,7 +33,7 @@ export function ReviewFeedbackButton({
   };
 
   const handleSaveButton = async () => {
-    loading.current = true;
+    setSaveLoading(true);
 
     await fetch(`${API_URL}/review`, {
       body: JSON.stringify({
@@ -37,7 +44,7 @@ export function ReviewFeedbackButton({
       method: 'PUT',
     });
 
-    loading.current = false;
+    setSaveLoading(false);
     modalRef?.current?.close();
     onSuccess?.();
   };
@@ -78,20 +85,21 @@ export function ReviewFeedbackButton({
             <textarea
               className="textarea textarea-bordered h-72 w-full"
               defaultValue={article}
+              disabled={!isWriter}
               placeholder="Feedback"
               ref={textareaRef}
             />
           </label>
-          <button
-            className="btn btn-primary btn-sm mt-8"
-            onClick={handleSaveButton}
-          >
-            {!loading.current ? (
-              'Save'
-            ) : (
-              <span className="loading loading-spinner" />
-            )}
-          </button>
+          {isWriter && (
+            <button
+              className="btn btn-primary btn-sm mt-8"
+              disabled={saveLoading}
+              onClick={handleSaveButton}
+            >
+              Save
+              {saveLoading && <span className="loading loading-spinner" />}
+            </button>
+          )}
           <form method="dialog">
             <button className="btn btn-circle btn-ghost btn-sm absolute right-2 top-2">
               ✕

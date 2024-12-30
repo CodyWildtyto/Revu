@@ -18,10 +18,10 @@ export async function POST(req: Request) {
         thumbnail_url,
         updated_at
       ) VALUES (
-        ${body.name}, 
+        ${body.name.toLowerCase()}, 
         ${crypticPassword},
         ${body.role},
-        'https://avatarfiles.alphacoders.com/266/266280.jpg',
+        'https://avatarfiles.alphacoders.com/374/thumb-1920-374826.png',
         ${updatedAt}
       )
       RETURNING *

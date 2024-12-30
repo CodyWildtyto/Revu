@@ -1,48 +1,18 @@
-import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
 
-import { Card } from '@/components/Card';
 import Page from '@/components/Page';
+import LoginPanel from './Auth/LoginPanel';
 
-export default function Index() {
+export default async function Index() {
+  const session = await getServerSession();
+
+  if (session) redirect('/review');
+
   return (
-    <Page className="items-center">
+    <Page className="ml-auto mr-auto max-w-screen-xl items-center">
       <h1 className="grow">Rev:u</h1>
-      <Card className="basis-96">
-        <form className="card-body">
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Email</span>
-            </label>
-            <input
-              type="email"
-              placeholder="email"
-              className="input input-bordered"
-              required
-            />
-          </div>
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Password</span>
-            </label>
-            <input
-              type="password"
-              placeholder="password"
-              className="input input-bordered"
-              required
-            />
-            <label className="label">
-              <a href="#" className="label-text-alt link link-hover">
-                Forgot?
-              </a>
-            </label>
-          </div>
-          <div className="form-control mt-6">
-            <Link href="/review">
-              <button className="btn btn-primary btn-block">Login</button>
-            </Link>
-          </div>
-        </form>
-      </Card>
+      <LoginPanel />
     </Page>
   );
 }

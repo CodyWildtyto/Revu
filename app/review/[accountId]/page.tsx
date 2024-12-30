@@ -26,7 +26,7 @@ export default function ReviewByAccountId() {
       <Card className="grow">
         <h2>Review : {account?.name}</h2>
         {isLoading ? (
-          <span className="loading loading-dots loading-sm" />
+          <span className="loading loading-dots" />
         ) : list.length ? (
           <ReviewTable data={list} onEditSuccess={handleEditSuccess} />
         ) : (

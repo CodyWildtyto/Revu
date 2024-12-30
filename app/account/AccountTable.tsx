@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import { InboxIcon } from '@/app/svgs';
-import Thumbnail from '@/components/Thumbnail';
+import Thumbnail from '@/components/Avatar';
 import { TAccount } from '@/types/account';
 import { AccountEditButton } from './AccountEditButton';
 

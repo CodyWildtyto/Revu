@@ -1,10 +1,10 @@
+import clsx from 'clsx';
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 
 import { API_URL, ROLE_LIST } from '@/app/constants';
 import { EditIcon } from '@/app/svgs';
-import LabelSelect from '@/components/LabelSelect';
-import clsx from 'clsx';
 import Input from '@/components/Input';
+import LabelSelect from '@/components/LabelSelect';
 
 export function AccountEditButton({
   data: { id, name, role },
@@ -17,7 +17,9 @@ export function AccountEditButton({
   const [saveLoading, setSaveLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [nameValue, setNameValue] = useState(name);
+  const [isNameInValid, setIsNameInValid] = useState(false);
   const [passwordValue, setPasswordValue] = useState('');
+  const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
   const [roleValue, setRoleValue] = useState(role);
   const [isDeleteConfirming, setIsDeleteConfirming] = useState(false);
 
@@ -36,11 +38,17 @@ export function AccountEditButton({
   };
 
   const handleNameChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    setNameValue(target.value);
+    const { value } = target;
+
+    setIsNameInValid(!/^[A-Za-z0-9_]+$/.test(value));
+    setNameValue(value);
   };
 
   const handlePasswordChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    setPasswordValue(target.value);
+    const { value } = target;
+
+    setIsPasswordInvalid(!/^[A-Za-z0-9]+$/.test(value));
+    setPasswordValue(value);
   };
 
   const handleRoleSelect = ({ target }: ChangeEvent<HTMLSelectElement>) => {
@@ -99,8 +107,14 @@ export function AccountEditButton({
       <dialog className="modal" ref={modalRef} onClose={handleModalClosed}>
         <div className="modal-box">
           <h3 className="text-lg font-bold">Edit Account</h3>
-          <Input onChange={handleNameChange} title="Name" value={nameValue} />
           <Input
+            isInvalid={!!nameValue && isNameInValid}
+            onChange={handleNameChange}
+            title="Name"
+            value={nameValue}
+          />
+          <Input
+            isInvalid={!!passwordValue && isPasswordInvalid}
             onChange={handlePasswordChange}
             title="Change Password"
             type="password"
@@ -115,7 +129,13 @@ export function AccountEditButton({
           <button
             className="btn btn-primary btn-sm mt-8"
             onClick={handleSaveButton}
-            disabled={!nameValue || !roleValue}
+            disabled={
+              !nameValue ||
+              !roleValue ||
+              isNameInValid ||
+              isPasswordInvalid ||
+              saveLoading
+            }
           >
             Save
             {saveLoading && (

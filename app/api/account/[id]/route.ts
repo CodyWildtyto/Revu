@@ -40,7 +40,7 @@ export async function PUT(
       rows: [data],
     } = await sql`
       UPDATE rv_account SET 
-        name = ${body.name},
+        name = ${body.name.toLowerCase()},
         password = COALESCE(${crypticPassword}, password),
         role = ${body.role},
         updated_at = ${updatedAt}

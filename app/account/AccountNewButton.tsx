@@ -2,14 +2,16 @@ import { ChangeEvent, useCallback, useRef, useState } from 'react';
 
 import { API_URL, ROLE_LIST } from '@/app/constants';
 import { PlusIcon } from '@/app/svgs';
-import LabelSelect from '@/components/LabelSelect';
 import Input from '@/components/Input';
+import LabelSelect from '@/components/LabelSelect';
 
 export function AccountNewButton({ onSuccess }: { onSuccess?: VoidFunction }) {
   const modalRef = useRef<HTMLDialogElement | null>(null);
   const [saveLoading, setSaveLoading] = useState(false);
   const [nameValue, setNameValue] = useState('');
+  const [isNameInValid, setIsNameInValid] = useState(false);
   const [passwordValue, setPasswordValue] = useState('');
+  const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
   const [roleValue, setRoleValue] = useState('general');
 
   const resetForm = useCallback(() => {
@@ -27,11 +29,17 @@ export function AccountNewButton({ onSuccess }: { onSuccess?: VoidFunction }) {
   };
 
   const handleNameChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    setNameValue(target.value);
+    const { value } = target;
+
+    setIsNameInValid(!/^[A-Za-z0-9_]+$/.test(value));
+    setNameValue(value);
   };
 
   const handlePasswordChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    setPasswordValue(target.value);
+    const { value } = target;
+
+    setIsPasswordInvalid(!/^[A-Za-z0-9]+$/.test(value));
+    setPasswordValue(value);
   };
 
   const handleRoleSelect = ({ target }: ChangeEvent<HTMLSelectElement>) => {
@@ -66,8 +74,14 @@ export function AccountNewButton({ onSuccess }: { onSuccess?: VoidFunction }) {
       <dialog className="modal" ref={modalRef} onClose={handleModalClosed}>
         <div className="modal-box">
           <h3 className="text-lg font-bold">Create account</h3>
-          <Input onChange={handleNameChange} title="Name" value={nameValue} />
           <Input
+            isInvalid={!!nameValue && isNameInValid}
+            onChange={handleNameChange}
+            title="Name"
+            value={nameValue}
+          />
+          <Input
+            isInvalid={!!passwordValue && isPasswordInvalid}
             onChange={handlePasswordChange}
             title="Password"
             type="password"
@@ -82,7 +96,14 @@ export function AccountNewButton({ onSuccess }: { onSuccess?: VoidFunction }) {
           <button
             className="btn btn-primary btn-sm mt-8"
             onClick={handleCreateButton}
-            disabled={!nameValue || !passwordValue || !roleValue}
+            disabled={
+              !nameValue ||
+              !passwordValue ||
+              !roleValue ||
+              isNameInValid ||
+              isPasswordInvalid ||
+              saveLoading
+            }
           >
             Create
             {saveLoading && (

@@ -1,4 +1,8 @@
-import Thumbnail from '@/components/Thumbnail';
+import { User } from 'next-auth';
+import { useSession } from 'next-auth/react';
+
+import Thumbnail from '@/components/Avatar';
+import { TAccount } from '@/types/account';
 import { TReview } from '@/types/review';
 import { ReviewEditButton } from './ReviewEditButton';
 import { ReviewFeedbackButton } from './ReviewFeedbackButton';
@@ -10,6 +14,11 @@ export default function ReviewTable({
   data: TReview[];
   onEditSuccess?: VoidFunction;
 }) {
+  const { data: session } = useSession();
+
+  const user = session?.user as User & TAccount;
+  const isAdmin = user?.role === 'admin';
+
   const handleEditSuccess = () => {
     onEditSuccess?.();
   };
@@ -33,7 +42,6 @@ export default function ReviewTable({
               <tr className="hover" key={item.id}>
                 <td>
                   <Thumbnail
-                    className="mr-2"
                     src={item.target.thumbnailUrl}
                     alt={item.target.name}
                   >
@@ -42,7 +50,6 @@ export default function ReviewTable({
                 </td>
                 <td>
                   <Thumbnail
-                    className="mr-2"
                     src={item.writer.thumbnailUrl}
                     alt={item.writer.name}
                   >
@@ -53,7 +60,12 @@ export default function ReviewTable({
                 <td>{item.status}</td>
                 <td>{new Date(item.updatedAt).toLocaleString()}</td>
                 <td>
-                  <ReviewEditButton data={item} onSuccess={handleEditSuccess} />
+                  {isAdmin && (
+                    <ReviewEditButton
+                      data={item}
+                      onSuccess={handleEditSuccess}
+                    />
+                  )}
                   <ReviewFeedbackButton
                     data={item}
                     onSuccess={handleEditSuccess}
